@@ -62,7 +62,7 @@ jobs:
       run: ./scripts/push-image.sh
 
     - name: Get AKS credentials
-      run: az aks get-credentials --resource-group acr92d --name aks-cluster
+      run: az aks get-credentials --resource-group rg92d --name aks-cluster
 
     - name: Deploy to Kubernetes
       run: ./scripts/deploy.sh
