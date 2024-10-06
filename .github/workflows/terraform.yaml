@@ -20,8 +20,7 @@ jobs:
       uses: hashicorp/setup-terraform@v1
 
     - name: Terraform Init
-      run: terraform init
-      working-directory: ./terraform
+      run: terraform -chdir=./terraform init
       env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -29,19 +28,17 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     - name: Terraform Plan
-      run: terraform plan -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
+      run: terraform -chdir=./terraform plan -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
                           -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
                           -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
                           -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}"
-      working-directory: ./terraform 
 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main'
-      run: terraform apply -auto-approve -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
+      run: terraform -chdir=./terraform apply -auto-approve -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
                            -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
                            -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
                            -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}"
-      working-directory: ./terraform
 
     - name: Build Docker Images
       run: ./scripts/build-image.sh
