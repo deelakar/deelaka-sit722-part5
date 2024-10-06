@@ -1,10 +1,10 @@
 provider "azurerm" {
   features {}
-
-  subscription_id = "4714bf4e-36cf-45c8-ac10-5aa66c74031f"
-  client_id       = "2ab33840-96d2-4f01-9e37-4f5ca50b5103"
-  client_secret   = "N3w8Q~QJzH4xqpUJl8g4.jRsY3esKnoTbcP6bacf"
-  tenant_id       = "d02378ec-1688-46d5-8540-1c28b5f470f6"
+  
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
 }
 
 provider "kubernetes" {
