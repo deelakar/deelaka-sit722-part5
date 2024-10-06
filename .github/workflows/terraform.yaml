@@ -44,6 +44,10 @@ jobs:
           -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
           -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}"
 
+    # Add this step to set permissions
+    - name: Set script permissions
+      run: chmod +x ./scripts/*.sh
+
     - name: Build Docker Images
       run: ./scripts/build-image.sh
 
