@@ -19,13 +19,18 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
     - name: Terraform Init
       run: terraform -chdir=./terraform init
       env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     - name: Terraform Plan
       run: |
@@ -44,15 +49,20 @@ jobs:
           -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
           -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}"
 
-    # Add this step to set permissions
     - name: Set script permissions
       run: chmod +x ./scripts/*.sh
+
+    - name: Login to Azure Container Registry
+      run: az acr login --name acr92d
 
     - name: Build Docker Images
       run: ./scripts/build-image.sh
 
     - name: Push Docker Images
       run: ./scripts/push-image.sh
+
+    - name: Get AKS credentials
+      run: az aks get-credentials --resource-group acr92d --name aks-cluster
 
     - name: Deploy to Kubernetes
       run: ./scripts/deploy.sh
